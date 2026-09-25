@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Claude Sessions CLI | Transfer & Manage Claude Desktop Sessions in Rust</title>
+  <meta name="description" content="A blazing fast native command-line tool and agent interface for transferring and managing Claude desktop Code-tab sessions across accounts and organizations. Built in pure Rust.">
+  <link rel="canonical" href="https://spacecorps.github.io/Claude-Sessions-Cli/">
+  <meta name="is-agentic-site-type" content="content">
+  <meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1">
+  <meta name="keywords" content="Claude Desktop, Claude Code, Sessions, CLI, Rust, multi-account, migration, AI agents, developer tools, SpaceCorps">
+  <meta name="author" content="SpaceCorps">
+
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://spacecorps.github.io/Claude-Sessions-Cli/">
+  <meta property="og:title" content="Claude Sessions CLI | Transfer & Manage Claude Desktop Sessions in Rust">
+  <meta property="og:description" content="Recover and migrate your Claude desktop Code-tab sessions across accounts and organizations. 100% offline, native Rust, zero telemetry.">
+  <meta property="og:image" content="https://spacecorps.github.io/Claude-Sessions-Cli/og-image.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Claude Sessions CLI — SpaceCorps">
+  <meta property="og:site_name" content="Claude Sessions CLI">
+  <meta property="og:locale" content="en_US">
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:url" content="https://spacecorps.github.io/Claude-Sessions-Cli/">
+  <meta name="twitter:title" content="Claude Sessions CLI | Transfer & Manage Claude Desktop Sessions in Rust">
+  <meta name="twitter:description" content="Recover and migrate your Claude desktop Code-tab sessions across accounts and organizations. 100% offline, native Rust, zero telemetry.">
+  <meta name="twitter:image" content="https://spacecorps.github.io/Claude-Sessions-Cli/og-image.png">
+
+  <!-- AI Agents & Discovery -->
+  <link rel="alternate" type="text/markdown" href="https://spacecorps.github.io/Claude-Sessions-Cli/index.md" title="Markdown Homepage">
+  <link rel="alternate" type="text/markdown" href="https://spacecorps.github.io/Claude-Sessions-Cli/llms.txt" title="LLMs.txt">
+  <link rel="sitemap" type="application/xml" href="https://spacecorps.github.io/Claude-Sessions-Cli/sitemap.xml" title="Sitemap">
+  <script>
+    if (new URLSearchParams(window.location.search).get('mode') === 'agent') {
+      window.location.href = 'llms.txt';
+    }
+  </script>
+
+  <!-- Favicon -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>">
+
+  <!-- JSON-LD Structured Data -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "SoftwareApplication",
+        "name": "Claude Sessions CLI",
+        "applicationCategory": "DeveloperApplication",
+        "operatingSystem": "macOS, Linux, Windows",
+        "url": "https://spacecorps.github.io/Claude-Sessions-Cli/",
+        "description": "A blazing fast native command-line tool and agent interface for transferring and managing Claude desktop Code-tab sessions across accounts and organizations in pure Rust.",
+        "softwareVersion": "1.0.0",
+        "downloadUrl": "https://github.com/SpaceCorps/Claude-Sessions-Cli/releases/latest",
+        "license": "https://opensource.org/licenses/MIT",
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "USD"
+        },
+        "author": {
+          "@type": "Organization",
+          "name": "SpaceCorps",
+          "url": "https://github.com/SpaceCorps"
+        }
+      },
+      {
+        "@type": "Organization",
+        "name": "SpaceCorps",
+        "url": "https://github.com/SpaceCorps",
+        "sameAs": [
+          "https://github.com/SpaceCorps/Claude-Sessions-Cli",
+          "https://github.com/SpaceCorps",
+          "https://spacecorps.github.io"
+        ],
+        "contactPoint": {
+          "@type": "ContactPoint",
+          "contactType": "technical support",
+          "url": "https://github.com/SpaceCorps/Claude-Sessions-Cli/issues"
+        }
+      }
+    ]
+  }
+  </script>
+
+  <!-- SpaceCorps Design Tokens & Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700;800;900&family=Geist+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="tokens.css">
+
+  <style>
+    :root {
+      --bg: #090d16;
+      --bg-card: rgba(18, 22, 36, 0.75);
+      --bg-card-hover: rgba(28, 35, 58, 0.85);
+      --border: rgba(255, 255, 255, 0.1);
+      --border-accent: rgba(99, 102, 241, 0.35);
+      --text: #f1f5f9;
+      --text-muted: #94a3b8;
+      --text-dim: #64748b;
+      --primary: #6366f1;
+      --primary-hover: #4f46e5;
+      --primary-glow: rgba(99, 102, 241, 0.35);
+      --accent: #38bdf8;
+      --accent-glow: rgba(56, 189, 248, 0.2);
+      --success: #10b981;
+      --code-bg: #0d1117;
+      --radius: 12px;
+      --radius-sm: 8px;
+      --font-sans: "Geist", "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      --font-mono: "Geist Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: var(--font-sans);
+      line-height: 1.6;
+      overflow-x: hidden;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      background-image: 
+        radial-gradient(ellipse 80% 50% at 50% -20%, rgba(99, 102, 241, 0.2), transparent),
+        radial-gradient(circle 400px at 90% 20%, rgba(56, 189, 248, 0.08), transparent);
+    }
+
+    a { color: var(--accent); text-decoration: none; transition: color 0.15s ease; }
+    a:hover { color: #7dd3fc; }
+
+    .container { width: 100%; max-width: 1140px; margin: 0 auto; padding: 0 24px; }
+
+    header {
+      padding: 20px 0;
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      background: rgba(9, 13, 22, 0.85);
+      backdrop-filter: blur(12px);
+      z-index: 100;
+    }
+
+    .nav { display: flex; justify-content: space-between; align-items: center; }
+    .logo { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 1.25rem; color: #fff; }
+    .logo-badge {
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      color: #fff;
+      font-size: 0.75rem;
+      padding: 2px 8px;
+      border-radius: 9999px;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+    }
+
+    .nav-links { display: flex; gap: 20px; align-items: center; list-style: none; }
+    .nav-links a { color: var(--text-muted); font-size: 0.95rem; font-weight: 500; }
+    .nav-links a:hover { color: #fff; }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--primary);
+      color: #fff;
+      padding: 10px 20px;
+      border-radius: var(--radius-sm);
+      font-weight: 600;
+      font-size: 0.95rem;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-decoration: none;
+    }
+    .btn:hover { background: var(--primary-hover); transform: translateY(-1px); color: #fff; box-shadow: 0 4px 16px var(--primary-glow); }
+    .btn-secondary { background: rgba(255, 255, 255, 0.05); color: var(--text); border-color: var(--border); }
+    .btn-secondary:hover { background: rgba(255, 255, 255, 0.1); color: #fff; box-shadow: none; }
+
+    .hero { padding: 80px 0 50px; text-align: center; }
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(99, 102, 241, 0.12);
+      border: 1px solid rgba(99, 102, 241, 0.3);
+      padding: 6px 14px;
+      border-radius: 9999px;
+      font-size: 0.85rem;
+      color: #a5b4fc;
+      margin-bottom: 24px;
+      font-weight: 500;
+    }
+    .hero h1 {
+      font-size: 3.2rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      line-height: 1.15;
+      margin-bottom: 20px;
+      background: linear-gradient(180deg, #ffffff 0%, #cbd5e1 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .hero p {
+      font-size: 1.25rem;
+      color: var(--text-muted);
+      max-width: 720px;
+      margin: 0 auto 36px;
+    }
+    .hero-actions { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; margin-bottom: 40px; }
+
+    .code-hero {
+      max-width: 680px;
+      margin: 0 auto 60px;
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+    }
+    .code-hero code { font-family: var(--font-mono); color: #38bdf8; font-size: 0.95rem; }
+    .copy-btn {
+      background: rgba(255, 255, 255, 0.1);
+      border: none;
+      color: var(--text-muted);
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .copy-btn:hover { background: rgba(255, 255, 255, 0.2); color: #fff; }
+
+    .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 24px; margin-bottom: 60px; }
+    .card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 28px;
+      transition: all 0.2s ease;
+      backdrop-filter: blur(12px);
+    }
+    .card:hover { border-color: var(--border-accent); transform: translateY(-2px); background: var(--bg-card-hover); }
+    .card-icon { font-size: 1.8rem; margin-bottom: 16px; }
+    .card h3 { font-size: 1.2rem; margin-bottom: 10px; color: #fff; }
+    .card p { color: var(--text-muted); font-size: 0.95rem; line-height: 1.6; }
+
+    .section-title { text-align: center; margin-bottom: 40px; }
+    .section-title h2 { font-size: 2.2rem; font-weight: 700; color: #fff; margin-bottom: 12px; }
+    .section-title p { color: var(--text-muted); max-width: 600px; margin: 0 auto; }
+
+    .table-container {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow-x: auto;
+      margin-bottom: 60px;
+    }
+    table { width: 100%; border-collapse: collapse; text-align: left; }
+    th { background: rgba(255, 255, 255, 0.03); color: #fff; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; padding: 16px 20px; border-bottom: 1px solid var(--border); }
+    td { padding: 16px 20px; border-bottom: 1px solid var(--border); font-size: 0.95rem; color: var(--text-muted); }
+    tr:last-child td { border-bottom: none; }
+    td code { font-family: var(--font-mono); color: #38bdf8; background: rgba(56, 189, 248, 0.1); padding: 2px 6px; border-radius: 4px; font-size: 0.85rem; }
+
+    .diagram-box {
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+      font-family: var(--font-mono);
+      font-size: 0.9rem;
+      color: #94a3b8;
+      overflow-x: auto;
+      line-height: 1.5;
+      margin-bottom: 60px;
+    }
+
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 50px 0 30px;
+      margin-top: auto;
+      background: rgba(9, 13, 22, 0.95);
+    }
+    .footer-grid { display: grid; grid-template-columns: 2fr repeat(3, 1fr); gap: 40px; margin-bottom: 40px; }
+    .footer-brand p { color: var(--text-muted); margin-top: 12px; font-size: 0.9rem; max-width: 320px; }
+    .footer-col h4 { color: #fff; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 16px; }
+    .footer-col ul { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+    .footer-col a { color: var(--text-muted); font-size: 0.9rem; }
+    .footer-col a:hover { color: #fff; }
+    .footer-bottom { border-top: 1px solid var(--border); padding-top: 24px; text-align: center; color: var(--text-dim); font-size: 0.85rem; }
+
+    @media (max-width: 768px) {
+      .hero h1 { font-size: 2.2rem; }
+      .footer-grid { grid-template-columns: 1fr; gap: 30px; }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="container nav">
+      <div class="logo">
+        <span>⚡ Claude Sessions CLI</span>
+        <span class="logo-badge">Rust 2024</span>
+      </div>
+      <ul class="nav-links">
+        <li><a href="#features">Features</a></li>
+        <li><a href="#commands">Commands</a></li>
+        <li><a href="#how-it-works">How It Works</a></li>
+        <li><a href="llms.txt">llms.txt</a></li>
+        <li><a href="https://github.com/SpaceCorps/Claude-Sessions-Cli" class="btn btn-secondary" target="_blank" rel="noopener">GitHub</a></li>
+      </ul>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero container">
+      <div class="pill">SpaceCorps Native CLI Fleet · v1.0.0</div>
+      <h1>Recover & Transfer Claude Desktop Code-Tab Sessions</h1>
+      <p>Switching accounts or organizations shouldn't erase your working history. Recover, inspect, and migrate local Code-tab sessions across accounts in 2 milliseconds.</p>
+
+      <div class="hero-actions">
+        <a href="#installation" class="btn">Install Binary</a>
+        <a href="https://github.com/SpaceCorps/Claude-Sessions-Cli" class="btn btn-secondary" target="_blank" rel="noopener">View Source on GitHub</a>
+        <a href="llms.txt" class="btn btn-secondary">Agent Manual (llms.txt)</a>
+      </div>
+
+      <div class="code-hero">
+        <code id="hero-cmd">claude-sessions transfer --dry-run</code>
+        <button class="copy-btn" onclick="navigator.clipboard.writeText(document.getElementById('hero-cmd').innerText); this.innerText='Copied!'; setTimeout(()=>this.innerText='Copy', 1500);">Copy</button>
+      </div>
+    </section>
+
+    <section id="features" class="container">
+      <div class="section-title">
+        <h2>Engineered for Safety, Speed & Privacy</h2>
+        <p>Built in pure Rust to provide zero-runtime overhead and complete offline data security.</p>
+      </div>
+
+      <div class="grid-3">
+        <div class="card">
+          <div class="card-icon">⚡</div>
+          <h3>Sub-Millisecond Execution</h3>
+          <p>Compiled natively to static binaries. Boots up and inspects hundreds of sessions in under 2ms without managed runtime or node overhead.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">🛡️</div>
+          <h3>100% Non-Destructive</h3>
+          <p>The CLI strictly performs non-destructive copies. Source profiles, worktrees, and sessions are never modified, moved, or deleted.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">🔒</div>
+          <h3>Zero Network & Zero Telemetry</h3>
+          <p>Completely local. Your prompts, code files, and conversation metadata never leave your workstation. No cloud API keys required.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">🤖</div>
+          <h3>AI Agent Native</h3>
+          <p>Outputs clean YAML by default or strict JSON with <code>--json</code>. Conforms to stable numeric exit codes for autonomous tool calling.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">🔍</div>
+          <h3>Auto-Profile Detection</h3>
+          <p>Automatically determines the signed-in account and active organization from the Claude Desktop config, or accepts prefix overrides.</p>
+        </div>
+        <div class="card">
+          <div class="card-icon">📦</div>
+          <h3>Cross-Platform</h3>
+          <p>Native precompiled binaries for macOS (Apple Silicon & Intel), Linux (musl static x86_64/arm64), and Windows x64.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="commands" class="container">
+      <div class="section-title">
+        <h2>Command Reference</h2>
+        <p>Inspect local profiles, query session details, and safely migrate sessions between accounts.</p>
+      </div>
+
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Command</th>
+              <th>Options</th>
+              <th>Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>claude-sessions list</code></td>
+              <td><code>--json</code></td>
+              <td>Discovers all account/org profiles on this workstation, shows session counts, and flags the current active profile.</td>
+            </tr>
+            <tr>
+              <td><code>claude-sessions sessions</code></td>
+              <td><code>[ACCOUNT[/ORG]]</code>, <code>--json</code></td>
+              <td>Lists sessions with ID, title, working directory path, archived status, and last activity timestamp.</td>
+            </tr>
+            <tr>
+              <td><code>claude-sessions transfer</code></td>
+              <td><code>--dry-run</code>, <code>--skip-archived</code></td>
+              <td>Transfers sessions from all other profiles into the currently signed-in profile. Safe and idempotent.</td>
+            </tr>
+            <tr>
+              <td><code>claude-sessions transfer</code></td>
+              <td><code>--from &lt;ID&gt;</code>, <code>--to &lt;ID&gt;</code></td>
+              <td>Explicit profile-to-profile session transfer. Supports unambiguous UUID prefixes (e.g. <code>--from 1a2b/3c4d</code>).</td>
+            </tr>
+            <tr>
+              <td><code>claude-sessions agent-readme</code></td>
+              <td><code>--json</code></td>
+              <td>Prints the embedded AI agent operating manual with rules, constraints, and exit code mappings.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="how-it-works" class="container">
+      <div class="section-title">
+        <h2>How It Works</h2>
+        <p>Understanding on-disk session architecture across operating systems.</p>
+      </div>
+
+      <div class="diagram-box">
+On macOS: ~/Library/Application Support/Claude/claude-code-sessions/&lt;account_uuid&gt;/&lt;org_uuid&gt;/
+On Windows: %APPDATA%\Claude\claude-code-sessions\&lt;account_uuid&gt;\&lt;org_uuid&gt;\
+On Linux: ~/.config/Claude/claude-code-sessions/&lt;account_uuid&gt;/&lt;org_uuid&gt;/
+
+Directory Structure:
+├── local_&lt;session_uuid&gt;.json   &lt;-- Metadata: session title, working dir, git branch
+├── deleted_&lt;session_uuid&gt;      &lt;-- Tombstone marker for deleted sessions
+└── archived-sessions.idx       &lt;-- Archived session UUID index
+
+Conversation transcripts live in ~/.claude/projects/ and are SHARED globally
+by every account. Copying the metadata file brings the full session back to life!
+      </div>
+    </section>
+
+    <section id="installation" class="container">
+      <div class="section-title">
+        <h2>Installation</h2>
+        <p>Install via Cargo or download precompiled standalone release archives.</p>
+      </div>
+
+      <div class="code-hero" style="margin-bottom: 30px;">
+        <code id="cargo-cmd">cargo install --git https://github.com/SpaceCorps/Claude-Sessions-Cli --locked</code>
+        <button class="copy-btn" onclick="navigator.clipboard.writeText(document.getElementById('cargo-cmd').innerText); this.innerText='Copied!'; setTimeout(()=>this.innerText='Copy', 1500);">Copy</button>
+      </div>
+
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Operating System</th>
+              <th>Architecture</th>
+              <th>Download Archive</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>macOS</strong></td>
+              <td>Apple Silicon (<code>aarch64</code>)</td>
+              <td><a href="https://github.com/SpaceCorps/Claude-Sessions-Cli/releases/latest"><code>claude-sessions-v1.0.0-aarch64-apple-darwin.tar.gz</code></a></td>
+            </tr>
+            <tr>
+              <td><strong>macOS</strong></td>
+              <td>Intel (<code>x86_64</code>)</td>
+              <td><a href="https://github.com/SpaceCorps/Claude-Sessions-Cli/releases/latest"><code>claude-sessions-v1.0.0-x86_64-apple-darwin.tar.gz</code></a></td>
+            </tr>
+            <tr>
+              <td><strong>Linux</strong></td>
+              <td>x86_64 (musl static)</td>
+              <td><a href="https://github.com/SpaceCorps/Claude-Sessions-Cli/releases/latest"><code>claude-sessions-v1.0.0-x86_64-unknown-linux-musl.tar.gz</code></a></td>
+            </tr>
+            <tr>
+              <td><strong>Linux</strong></td>
+              <td>ARM64 (musl static)</td>
+              <td><a href="https://github.com/SpaceCorps/Claude-Sessions-Cli/releases/latest"><code>claude-sessions-v1.0.0-aarch64-unknown-linux-musl.tar.gz</code></a></td>
+            </tr>
+            <tr>
+              <td><strong>Windows</strong></td>
+              <td>x64 (MSVC)</td>
+              <td><a href="https://github.com/SpaceCorps/Claude-Sessions-Cli/releases/latest"><code>claude-sessions-v1.0.0-x86_64-pc-windows-msvc.zip</code></a></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <div class="logo">
+            <span>⚡ Claude Sessions CLI</span>
+          </div>
+          <p>High-performance native Rust developer tooling and agent runtimes by SpaceCorps.</p>
+        </div>
+        <div class="footer-col">
+          <h4>Documentation</h4>
+          <ul>
+            <li><a href="llms.txt">llms.txt</a></li>
+            <li><a href="llms-full.txt">Agent Reference Manual</a></li>
+            <li><a href="auth.md">Authentication Guide</a></li>
+            <li><a href="pricing.md">Pricing & Licensing</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Trust & Company</h4>
+          <ul>
+            <li><a href="about.html">About the Project</a></li>
+            <li><a href="contact.html">Contact & Support</a></li>
+            <li><a href="privacy.html">Privacy Policy</a></li>
+            <li><a href="https://spacecorps.github.io">SpaceCorps Hub</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Community</h4>
+          <ul>
+            <li><a href="https://github.com/SpaceCorps/Claude-Sessions-Cli" target="_blank" rel="noopener">GitHub Repository</a></li>
+            <li><a href="https://github.com/SpaceCorps/Claude-Sessions-Cli/issues" target="_blank" rel="noopener">Issue Tracker</a></li>
+            <li><a href="https://github.com/SpaceCorps/Claude-Sessions-Cli/releases" target="_blank" rel="noopener">Release Downloads</a></li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        &copy; 2026 SpaceCorps. Free and open source under the MIT License.
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>

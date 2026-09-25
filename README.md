@@ -1,6 +1,8 @@
 # Claude Sessions CLI
 
+[![Release](https://img.shields.io/github/v/release/SpaceCorps/Claude-Sessions-Cli?color=blue&label=version)](https://github.com/SpaceCorps/Claude-Sessions-Cli/releases/latest)
 [![CI](https://github.com/SpaceCorps/Claude-Sessions-Cli/actions/workflows/ci.yml/badge.svg)](https://github.com/SpaceCorps/Claude-Sessions-Cli/actions/workflows/ci.yml)
+[![Docs](https://img.shields.io/badge/docs-online-success)](https://spacecorps.github.io/Claude-Sessions-Cli/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
 Get your Claude desktop Code-tab sessions back after switching accounts or organizations.
@@ -12,19 +14,41 @@ claude-sessions transfer --dry-run   # see what would move
 claude-sessions transfer             # copy it
 ```
 
-Then quit Claude completely (Cmd+Q) and reopen it.
+Then quit Claude completely (Cmd+Q on macOS) and reopen it.
 
-> Unofficial. This reads and writes the Claude desktop app's private session index, which can change between app versions. It only ever copies; the source profile is never modified.
+> **Unofficial.** This reads and writes the Claude desktop app's private session index, which can change between app versions. It only ever copies; the source profile is never modified.
+
+---
+
+## Highlights
+
+- ⚡ **Sub-2ms Startup**: Compiled as a native static Rust binary with zero runtime dependencies.
+- 🛡️ **Non-Destructive Copying**: Source profiles are never modified, moved, or deleted. Rerunning is always safe.
+- 🔒 **100% Offline & Private**: Zero network calls, zero API keys required, and zero telemetry.
+- 🤖 **AI Agent Native**: Machine-readable `--json` output, deterministic exit codes, and embedded `agent-readme`.
+- 🔍 **Auto-Detection**: Automatically identifies signed-in accounts and active orgs from local config files.
 
 ---
 
 ## Installation
 
+### Using Cargo
+
 ```bash
 cargo install --git https://github.com/SpaceCorps/Claude-Sessions-Cli --locked
 ```
 
-Or download a binary from [Releases](https://github.com/SpaceCorps/Claude-Sessions-Cli/releases/latest) (macOS arm64/x86_64, Linux musl x86_64/arm64, Windows x64).
+### Pre-built Standalone Binaries
+
+Download standalone binary archives directly from the [GitHub Releases](https://github.com/SpaceCorps/Claude-Sessions-Cli/releases/latest) page:
+
+| Platform | Architecture | Binary Package |
+|:---|:---|:---|
+| **macOS** | Apple Silicon (`aarch64`) | [`claude-sessions-v1.0.0-aarch64-apple-darwin.tar.gz`](https://github.com/SpaceCorps/Claude-Sessions-Cli/releases/download/v1.0.0/claude-sessions-v1.0.0-aarch64-apple-darwin.tar.gz) |
+| **macOS** | Intel (`x86_64`) | [`claude-sessions-v1.0.0-x86_64-apple-darwin.tar.gz`](https://github.com/SpaceCorps/Claude-Sessions-Cli/releases/download/v1.0.0/claude-sessions-v1.0.0-x86_64-apple-darwin.tar.gz) |
+| **Linux** | x86_64 (musl static) | [`claude-sessions-v1.0.0-x86_64-unknown-linux-musl.tar.gz`](https://github.com/SpaceCorps/Claude-Sessions-Cli/releases/download/v1.0.0/claude-sessions-v1.0.0-x86_64-unknown-linux-musl.tar.gz) |
+| **Linux** | ARM64 (musl static) | [`claude-sessions-v1.0.0-aarch64-unknown-linux-musl.tar.gz`](https://github.com/SpaceCorps/Claude-Sessions-Cli/releases/download/v1.0.0/claude-sessions-v1.0.0-aarch64-unknown-linux-musl.tar.gz) |
+| **Windows**| x64 (MSVC) | [`claude-sessions-v1.0.0-x86_64-pc-windows-msvc.zip`](https://github.com/SpaceCorps/Claude-Sessions-Cli/releases/download/v1.0.0/claude-sessions-v1.0.0-x86_64-pc-windows-msvc.zip) |
 
 ---
 
@@ -66,6 +90,14 @@ Conversation transcripts live in `~/.claude/projects/` and are shared by every a
 **Not transferred:** scheduled tasks and organization-level connectors, which belong to the old account.
 
 Set `CLAUDE_SESSIONS_DATA_DIR` to use a data directory other than the default.
+
+---
+
+## Documentation & Links
+
+- 🌐 **Web Documentation:** [https://spacecorps.github.io/Claude-Sessions-Cli/](https://spacecorps.github.io/Claude-Sessions-Cli/)
+- 🤖 **Agent Manual (`llms.txt`):** [https://spacecorps.github.io/Claude-Sessions-Cli/llms.txt](https://spacecorps.github.io/Claude-Sessions-Cli/llms.txt)
+- 🏢 **SpaceCorps Developer Hub:** [https://spacecorps.github.io](https://spacecorps.github.io)
 
 ---
 

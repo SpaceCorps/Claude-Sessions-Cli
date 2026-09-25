@@ -1,0 +1,61 @@
+# Claude Sessions CLI - Comprehensive Agent Reference Manual
+
+> An exhaustive technical reference manual for autonomous agents driving the Claude Sessions CLI (`claude-sessions`). Covers on-disk session parsing, account profile resolution, session metadata migration, and OS process lifecycle safety.
+
+## When To Use This Tool
+- Recovering disappeared Claude desktop Code-tab conversations after switching accounts or switching organizations.
+- Programmatic inspection of local Claude session state, titles, working directories, and archived status.
+- Migrating sessions between profiles (e.g., from personal email accounts to corporate enterprise organizations).
+- Offline, secure local session backup and consolidation with zero cloud API dependencies.
+
+## Architecture & How It Works
+
+The Claude Desktop app manages its local Code-tab sessions across platform-specific application data directories:
+- **macOS:** `~/Library/Application Support/Claude/claude-code-sessions/<account_uuid>/<org_uuid>/`
+- **Windows:** `%APPDATA%\Claude\claude-code-sessions\<account_uuid>\<org_uuid>\`
+- **Linux:** `~/.config/Claude/claude-code-sessions/<account_uuid>/<org_uuid>/`
+
+Inside each profile directory:
+- `local_<uuid>.json`: Individual session metadata (title, working directory, git branch/worktree, timestamps).
+- `deleted_<uuid>`: Tombstone marker indicating a session was explicitly deleted in this profile.
+- `archived-sessions.idx`: Index of archived session UUIDs.
+
+Conversation transcripts and message histories are stored centrally in `~/.claude/projects/` and are shared globally across all accounts on the host machine. Therefore, copying the metadata descriptor into the target profile restores the entire session and history inside the Claude desktop sidebar.
+
+### Custom Data Directory
+To override the default directory location (useful in headless test environments or custom installations), export:
+```bash
+export CLAUDE_SESSIONS_DATA_DIR="/path/to/claude/data"
+```
+
+## Exit Codes and Error Envelopes
+
+Every error response printed to `stderr` conforms to the standard SpaceCorps envelope structure:
+```json
+{
+  "code": "error_code_string",
+  "message": "Human-readable summary",
+  "detail": "Extended debugging context or filesystem details",
+  "remediation": "Exact suggested command or remediation step"
+}
+```
+
+Numeric exit codes:
+- `0`: Success (`ok`)
+- `1`: Unclassified filesystem or I/O error (`error`)
+- `4`: `not_found` - No Claude data directory, profile, or session matched
+- `6`: `invalid_input` - Ambiguous prefix or missing parameters
+- `7`: `no_account` - Signed-in account could not be determined automatically (pass `--to`)
+
+## Safety Guardrails & Determinism
+
+1. **Non-Destructive Copying:**
+   The CLI exclusively copies metadata files. The source profile is never deleted, moved, or altered.
+2. **Idempotence & Skip Reasons:**
+   Sessions are skipped safely (with a clear `reason` in the report) if:
+   - `already_in_destination`: The session already exists in the target profile.
+   - `deleted_in_destination`: A tombstone marker (`deleted_<uuid>`) exists in the destination.
+   - `worktree_missing`: The project directory no longer exists on disk (the desktop app would delete it immediately upon loading).
+   - `newer_copy_exists`: A newer modified timestamp exists in another profile.
+3. **Application Lifecycle Detection:**
+   Claude Desktop reads its session index on initial startup. The CLI inspects running processes and outputs `appRunning: true` if Claude is active, warning the user or agent to restart Claude Desktop (`Cmd+Q` on macOS) to reflect changes.

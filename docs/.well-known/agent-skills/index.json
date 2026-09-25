@@ -1,0 +1,11 @@
+{
+  "$schema": "https://schemas.agentskills.io/discovery/0.2.0/schema.json",
+  "skills": [
+    {
+      "name": "claude-sessions-cli",
+      "description": "Transfer and inspect Claude desktop Code-tab sessions across accounts and organizations without data loss or cloud leakage.",
+      "type": "skill-md",
+      "url": "https://spacecorps.github.io/Claude-Sessions-Cli/llms.txt"
+    }
+  ]
+}

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>About · Claude Sessions CLI</title>
+  <meta name="description" content="About Claude Sessions CLI: A high-performance native Rust tool and agent interface for transferring and managing Claude desktop Code-tab sessions across accounts.">
+  <link rel="canonical" href="https://spacecorps.github.io/Claude-Sessions-Cli/about.html">
+  <meta property="og:title" content="About · Claude Sessions CLI">
+  <meta property="og:description" content="About Claude Sessions CLI: A high-performance native Rust tool and agent interface for transferring and managing Claude desktop Code-tab sessions across accounts.">
+  <meta property="og:url" content="https://spacecorps.github.io/Claude-Sessions-Cli/about.html">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="https://spacecorps.github.io/Claude-Sessions-Cli/og-image.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="is-agentic-site-type" content="content">
+  <link rel="stylesheet" href="tokens.css">
+  <style>
+    body { background: #090d16; color: #f1f5f9; font-family: 'Geist', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; line-height: 1.7; padding: 40px 20px; }
+    .content-box { max-width: 800px; margin: 0 auto; background: rgba(22, 27, 46, 0.7); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 40px; backdrop-filter: blur(12px); }
+    h1 { font-size: 2.2rem; margin-bottom: 20px; color: #fff; }
+    h2 { font-size: 1.4rem; margin-top: 30px; margin-bottom: 12px; color: #38bdf8; }
+    p { margin-bottom: 16px; color: #94a3b8; }
+    a { color: #38bdf8; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    .back { display: inline-block; margin-bottom: 24px; color: #6366f1; font-weight: 500; }
+  </style>
+</head>
+<body>
+  <div class="content-box">
+    <a href="./" class="back">&larr; Back to Claude Sessions CLI</a>
+    <h1>About Claude Sessions CLI</h1>
+    
+    <p>Claude Sessions CLI (<code>claude-sessions</code>) is an open-source, high-performance systems utility developed under the SpaceCorps engineering collective. It solves a common pain point experienced by software engineers and technical teams: when switching accounts or organizations in the official Claude Desktop application, all previous Code-tab sessions vanish from the sidebar despite still residing safely on your workstation's disk.</p>
+
+    <h2>Project Mission & Design Philosophy</h2>
+    <p>Modern developer tools should be deterministic, instantaneous, and respect user privacy. We engineered <code>claude-sessions</code> in pure Rust to provide sub-millisecond execution times without managed runtime bloat, external node dependencies, or cloud network latency.</p>
+
+    <h2>Non-Destructive Architecture</h2>
+    <p>Safety is the primary invariant of <code>claude-sessions</code>. The CLI only ever performs non-destructive file copies. Source session records and project worktrees are never deleted, altered, or moved. Furthermore, the tool provides automated skip logic for sessions already present in the target profile, tombstoned items, and missing worktrees, making repeated runs completely safe and idempotent.</p>
+
+    <h2>100% Offline Privacy Guarantee</h2>
+    <p>Software development sessions frequently contain confidential intellectual property, API keys, proprietary prompts, and internal architecture diagrams. <code>claude-sessions</code> runs entirely offline on your local machine, performs zero outbound network requests, and requires zero cloud credentials.</p>
+  </div>
+</body>
+</html>

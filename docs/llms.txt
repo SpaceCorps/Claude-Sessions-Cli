@@ -1,0 +1,71 @@
+# Claude Sessions CLI
+
+> A high-performance native CLI and agent interface for inspecting and transferring Claude desktop Code-tab sessions across accounts and organizations without data loss or cloud leakage. Built in pure Rust for developers and autonomous AI workflows.
+
+## When to Use This CLI
+
+Use the `claude-sessions` CLI whenever you need to:
+- **Recover lost sidebar sessions:** Restore Code-tab sessions that disappeared from the Claude desktop app after signing in with a different account or switching organizations.
+- **Inspect on-disk sessions:** List all profiles, session IDs, working directory paths, titles, and timestamps across all local accounts.
+- **Migrate sessions between profiles:** Transfer sessions safely from legacy or personal accounts into corporate, enterprise, or secondary workspaces.
+- **Automate desktop workflow setups:** Drive local session synchronization deterministically in agent workflows with `--json` output and stable numeric exit codes.
+
+Do NOT use this tool if:
+- You are trying to interact with the Claude Cloud Web UI (`claude.ai` in a standard browser) rather than the official Claude Desktop application.
+- You expect cloud API synchronization; this tool operates 100% locally and offline on your local filesystem without network calls.
+
+## Core Agent Operating Principles
+
+1. **Dry-Run First:** Always execute `claude-sessions transfer --dry-run` and review what would move before applying file changes.
+2. **Copy, Never Move:** The CLI only copies session metadata and indexes. It never mutates or deletes the source profile.
+3. **App Lifecycle Awareness:** Claude desktop only indexes sessions on startup. If `appRunning: true` is returned, remind the user to quit Claude completely (Cmd+Q on macOS) and reopen it.
+4. **Machine-Readable Outputs:** Supply `--json` whenever parsing command outputs or driving automated tool-calling loops.
+5. **Deterministic Exit Codes:**
+   - `0`: Success / OK
+   - `1`: Filesystem or OS I/O error
+   - `4`: `not_found` (no Claude data directory, profile, or session matched)
+   - `6`: `invalid_input` (ambiguous prefix or missing required argument)
+   - `7`: `no_account` (signed-in account could not be auto-detected; specify `--to`)
+
+## Key Commands
+
+### List Local Profiles
+```bash
+claude-sessions list
+claude-sessions list --json
+```
+Lists every local account/org UUID pair discovered on disk, the total count of active sessions, and highlights the currently active profile.
+
+### Inspect Sessions
+```bash
+claude-sessions sessions
+claude-sessions sessions <ACCOUNT_PREFIX>/<ORG_PREFIX> --json
+```
+Returns individual session records containing `id`, `title`, `cwd` (working directory path), `archived`, and `updatedAt`.
+
+### Transfer Sessions
+```bash
+# Preview what would be transferred
+claude-sessions transfer --dry-run --json
+
+# Transfer from all other profiles into current active profile
+claude-sessions transfer
+
+# Targeted transfer by profile prefix and session ID
+claude-sessions transfer --from 1a2b/3c4d --to 9f8e/7d6c --session 5e6f7a8b
+
+# Skip archived sessions
+claude-sessions transfer --skip-archived
+```
+
+### Agent Manual
+```bash
+claude-sessions agent-readme
+claude-sessions agent-readme --json
+```
+
+## Documentation & Links
+- Web Documentation: https://spacecorps.github.io/Claude-Sessions-Cli/
+- Exhaustive Agent Manual: https://spacecorps.github.io/Claude-Sessions-Cli/llms-full.txt
+- GitHub Repository: https://github.com/SpaceCorps/Claude-Sessions-Cli
+- Organization Hub: https://spacecorps.github.io

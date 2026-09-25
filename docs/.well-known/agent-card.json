@@ -1,0 +1,17 @@
+{
+  "name": "Claude Sessions CLI Agent",
+  "description": "Agent interface and local session migration tool for Claude desktop Code-tab sessions across accounts and organizations.",
+  "url": "https://spacecorps.github.io/Claude-Sessions-Cli/",
+  "version": "1.0.0",
+  "capabilities": ["session-inspection", "session-migration", "profile-discovery", "offline-sync"],
+  "skills": [
+    {
+      "name": "claude-sessions-cli",
+      "url": "https://spacecorps.github.io/Claude-Sessions-Cli/llms.txt"
+    }
+  ],
+  "contact": {
+    "email": "contact@spacecorps.dev",
+    "url": "https://spacecorps.github.io/Claude-Sessions-Cli/contact.html"
+  }
+}
