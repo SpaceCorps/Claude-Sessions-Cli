@@ -1,0 +1,25 @@
+[package]
+name = "claude-sessions-cli"
+version = "1.0.0"
+edition = "2024"
+rust-version = "1.89"
+description = "Transfer Claude desktop Code-tab sessions between accounts and organizations"
+license = "MIT"
+repository = "https://github.com/SpaceCorps/Claude-Sessions-Cli"
+readme = "README.md"
+
+[[bin]]
+name = "claude-sessions"
+path = "src/main.rs"
+
+[dependencies]
+clap = { version = "4.6", default-features = false, features = ["std", "derive", "help", "usage", "error-context", "suggestions", "color", "wrap_help"] }
+serde_json = { version = "1", features = ["preserve_order"] }
+serde_norway = "0.9"
+
+[profile.release]
+opt-level = 3
+lto = "fat"
+codegen-units = 1
+panic = "abort"
+strip = true
