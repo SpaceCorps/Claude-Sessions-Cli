@@ -280,8 +280,9 @@
       font-size: 0.9rem;
       color: #94a3b8;
       overflow-x: auto;
-      line-height: 1.5;
-      margin-bottom: 60px;
+      line-height: 1.6;
+      white-space: pre;
+      margin-bottom: 30px;
     }
 
     footer {
@@ -429,21 +430,59 @@
     <section id="how-it-works" class="container">
       <div class="section-title">
         <h2>How It Works</h2>
-        <p>Understanding on-disk session architecture across operating systems.</p>
+        <p>Understanding on-disk session architecture and the zero-loss migration mechanism.</p>
       </div>
 
-      <div class="diagram-box">
-On macOS: ~/Library/Application Support/Claude/claude-code-sessions/&lt;account_uuid&gt;/&lt;org_uuid&gt;/
-On Windows: %APPDATA%\Claude\claude-code-sessions\&lt;account_uuid&gt;\&lt;org_uuid&gt;\
-On Linux: ~/.config/Claude/claude-code-sessions/&lt;account_uuid&gt;/&lt;org_uuid&gt;/
+      <!-- OS Storage Locations Grid -->
+      <div class="grid-3" style="margin-bottom: 24px;">
+        <div class="card" style="padding: 20px;">
+          <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 10px; font-weight: 600; color: #fff;">
+            <span>🍏 macOS</span>
+          </div>
+          <code style="font-family: var(--font-mono); font-size: 0.78rem; color: #38bdf8; word-break: break-all; display: block; background: rgba(0,0,0,0.35); padding: 10px 12px; border-radius: 6px; line-height: 1.5; border: 1px solid rgba(255,255,255,0.06);">~/Library/Application Support/Claude/claude-code-sessions/&lt;account&gt;/&lt;org&gt;/</code>
+        </div>
+        <div class="card" style="padding: 20px;">
+          <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 10px; font-weight: 600; color: #fff;">
+            <span>🪟 Windows</span>
+          </div>
+          <code style="font-family: var(--font-mono); font-size: 0.78rem; color: #38bdf8; word-break: break-all; display: block; background: rgba(0,0,0,0.35); padding: 10px 12px; border-radius: 6px; line-height: 1.5; border: 1px solid rgba(255,255,255,0.06);">%APPDATA%\Claude\claude-code-sessions\&lt;account&gt;\&lt;org&gt;\</code>
+        </div>
+        <div class="card" style="padding: 20px;">
+          <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 10px; font-weight: 600; color: #fff;">
+            <span>🐧 Linux</span>
+          </div>
+          <code style="font-family: var(--font-mono); font-size: 0.78rem; color: #38bdf8; word-break: break-all; display: block; background: rgba(0,0,0,0.35); padding: 10px 12px; border-radius: 6px; line-height: 1.5; border: 1px solid rgba(255,255,255,0.06);">~/.config/Claude/claude-code-sessions/&lt;account&gt;/&lt;org&gt;/</code>
+        </div>
+      </div>
 
-Directory Structure:
-├── local_&lt;session_uuid&gt;.json   &lt;-- Metadata: session title, working dir, git branch
-├── deleted_&lt;session_uuid&gt;      &lt;-- Tombstone marker for deleted sessions
-└── archived-sessions.idx       &lt;-- Archived session UUID index
+      <!-- File Structure Visualizer Terminal Window -->
+      <div style="background: #0d1117; border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; margin-bottom: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.4);">
+        <div style="background: rgba(255,255,255,0.04); border-bottom: 1px solid var(--border); padding: 12px 18px; display: flex; align-items: center; gap: 8px;">
+          <span style="width: 10px; height: 10px; border-radius: 50%; background: #ff5f56; display: inline-block;"></span>
+          <span style="width: 10px; height: 10px; border-radius: 50%; background: #ffbd2e; display: inline-block;"></span>
+          <span style="width: 10px; height: 10px; border-radius: 50%; background: #27c93f; display: inline-block;"></span>
+          <span style="font-family: var(--font-mono); font-size: 0.8rem; color: var(--text-dim); margin-left: 10px;">Directory Structure: claude-code-sessions/&lt;account_uuid&gt;/&lt;org_uuid&gt;/</span>
+        </div>
+        <pre style="padding: 20px 24px; margin: 0; font-family: var(--font-mono); font-size: 0.88rem; line-height: 1.7; overflow-x: auto; color: #cbd5e1; white-space: pre; background: transparent;"><code>claude-code-sessions/&lt;account_uuid&gt;/&lt;org_uuid&gt;/
+├── <span style="color: #38bdf8; font-weight: 600;">local_&lt;session_uuid&gt;.json</span>   <span style="color: #64748b;"># Session metadata: title, cwd, git branch, updated timestamp</span>
+├── <span style="color: #f87171; font-weight: 600;">deleted_&lt;session_uuid&gt;</span>      <span style="color: #64748b;"># Tombstone marker: prevents restoring user-deleted sessions</span>
+└── <span style="color: #fbbf24; font-weight: 600;">archived-sessions.idx</span>       <span style="color: #64748b;"># Index of archived session UUIDs</span></code></pre>
+      </div>
 
-Conversation transcripts live in ~/.claude/projects/ and are SHARED globally
-by every account. Copying the metadata file brings the full session back to life!
+      <!-- Key Insight Callout Card -->
+      <div class="card" style="border-left: 4px solid var(--primary); background: linear-gradient(135deg, rgba(99, 102, 241, 0.08) 0%, rgba(18, 22, 36, 0.8) 100%); margin-bottom: 60px;">
+        <div style="display: flex; gap: 16px; align-items: flex-start;">
+          <div style="font-size: 1.8rem; line-height: 1;">💡</div>
+          <div>
+            <h3 style="font-size: 1.15rem; margin-bottom: 8px; color: #fff;">Why Session Transfer Works Seamlessly</h3>
+            <p style="color: var(--text-muted); font-size: 0.95rem; line-height: 1.6; margin-bottom: 10px;">
+              Full conversation transcripts, code diffs, and message histories are saved centrally in <code style="font-family: var(--font-mono); color: #38bdf8; background: rgba(56, 189, 248, 0.1); padding: 2px 6px; border-radius: 4px;">~/.claude/projects/</code> and are <strong>shared globally by every account</strong> on your computer.
+            </p>
+            <p style="color: var(--text-muted); font-size: 0.95rem; line-height: 1.6;">
+              When you run <code style="font-family: var(--font-mono); color: #38bdf8; background: rgba(56, 189, 248, 0.1); padding: 2px 6px; border-radius: 4px;">claude-sessions transfer</code>, it copies only the lightweight metadata index files into your active profile. Quit Claude completely (<kbd style="font-family: var(--font-mono); background: rgba(255,255,255,0.1); padding: 2px 5px; border-radius: 4px; font-size: 0.85em;">Cmd+Q</kbd> on macOS) and reopen it: the desktop sidebar immediately links with the on-disk transcripts, bringing all Code-tab sessions back without any cloud re-downloading.
+            </p>
+          </div>
+        </div>
       </div>
     </section>
 
