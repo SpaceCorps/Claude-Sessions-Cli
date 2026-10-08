@@ -25,7 +25,7 @@ pub fn print() {
 const RULES: &[&str] = &[
     "Run 'claude-sessions transfer --dry-run' first and show the user what would move.",
     "Transfer copies; it never deletes or edits the source profile.",
-    "Sessions already in the destination, or deleted there, are skipped. Rerunning is safe.",
+    "A session already in the destination is replaced only by a newer copy (listed under 'updated'); one deleted there is skipped. Rerunning is safe.",
     "After a real transfer the user must quit and reopen the Claude app; do not tell them it is done until then.",
     "Profiles are ACCOUNT/ORG UUID pairs; any unambiguous prefix of either part works.",
     "Use --json when you are going to parse the output.",
@@ -55,7 +55,10 @@ The app reads its session list only at startup. Tell the user to quit Claude com
 
 - Dry-run first and show the user the list.
 - Transfer copies, never moves. The source profile is untouched.
-- Skipped sessions carry a `reason`: already in destination, deleted in destination, worktree
+- A session the destination already has is replaced when a source holds a newer copy; those
+  are listed under `updated`. Continuing a session can switch it to a new transcript, so the
+  stale copy would reopen old history.
+- Skipped sessions carry a `reason`: already in destination (and up to date), deleted in destination, worktree
   no longer exists (the app would delete it), archived (with --skip-archived), or newer copy
   in another profile.
 - Scheduled tasks and organization connectors are not transferred.

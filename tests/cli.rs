@@ -169,7 +169,24 @@ fn transfer_copies_new_sessions_and_skips_the_rest() {
     assert!(!f.files(CUR).iter().any(|n| n.ends_with(".tmp")));
     let again = f.json(&["transfer"]);
     assert_eq!(again["transferred"], json!([]));
+    assert_eq!(again["updated"], json!([]));
     assert_eq!(again["next"], "Nothing to transfer.");
+}
+
+#[test]
+fn transfer_replaces_a_stale_copy_with_a_newer_one() {
+    let f = Fixture::new("update");
+    f.session(OLD, "s4", "Kept working elsewhere", false, 500);
+    let out = f.json(&["transfer"]);
+    assert_eq!(ids(&out["updated"]), ["local_s4"]);
+    assert!(!ids(&out["transferred"]).contains(&"local_s4"));
+    let copied = fs::read(f.profile(CUR).join("local_s4.json")).unwrap();
+    assert_eq!(copied, fs::read(f.profile(OLD).join("local_s4.json")).unwrap());
+
+    // Now up to date, so a rerun leaves it alone.
+    let again = f.json(&["transfer"]);
+    assert_eq!(again["updated"], json!([]));
+    assert_eq!(reason(&again, "local_s4"), "already in destination");
 }
 
 #[test]

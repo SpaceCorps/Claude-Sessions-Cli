@@ -34,7 +34,7 @@ tests/cli.rs          # end-to-end against a fixture data directory
 ## Invariants
 
 1. **Copy, never move or edit.** Session files are copied byte for byte. The source profile is never written to.
-2. **Respect the destination.** Never overwrite a session that already exists there, and never resurrect one it has a `deleted_<uuid>` tombstone for.
+2. **Respect the destination.** Overwrite a session that already exists there only with a strictly newer copy (`lastActivityAt`), and never resurrect one it has a `deleted_<uuid>` tombstone for.
 3. **Atomic writes.** Copy to `*.tmp`, then rename, so the app never reads half a file.
 4. **Preserve unknown fields** in `archived-sessions.idx`; only append to its `archived` array.
 5. **Stdout is always valid YAML/JSON**; errors go to stderr as `{error, code, detail?, remediation?}`.

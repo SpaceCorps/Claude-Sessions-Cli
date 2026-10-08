@@ -53,7 +53,7 @@ Numeric exit codes:
    The CLI exclusively copies metadata files. The source profile is never deleted, moved, or altered.
 2. **Idempotence & Skip Reasons:**
    Sessions are skipped safely (with a clear `reason` in the report) if:
-   - `already_in_destination`: The session already exists in the target profile.
+   - `already_in_destination`: The target profile's copy is as new as any source copy. (A strictly newer source copy replaces it and is reported under `updated`.)
    - `deleted_in_destination`: A tombstone marker (`deleted_<uuid>`) exists in the destination.
    - `worktree_missing`: The project directory no longer exists on disk (the desktop app would delete it immediately upon loading).
    - `newer_copy_exists`: A newer modified timestamp exists in another profile.
