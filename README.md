@@ -73,7 +73,9 @@ Output is YAML; add `--json` for JSON. Profiles are `ACCOUNT/ORG` UUID pairs, an
 | `--skip-archived` | Leave archived sessions behind (by default they come over still archived) |
 | `--dry-run` | Report without writing |
 
-A session is skipped, with a `reason`, when it is already in the destination, was deleted there, its git worktree no longer exists (the app would delete it on load), or a newer copy exists in another profile. Rerunning is always safe.
+If the destination already has a session but another profile holds a newer copy (you kept working on it under another login), the newer copy replaces it and is listed under `updated`. Continuing a session can move it to a new transcript, so the stale copy would otherwise reopen old history.
+
+A session is skipped, with a `reason`, when the destination's copy is already up to date, it was deleted there, its git worktree no longer exists (the app would delete it on load), or a newer copy exists in another profile. Rerunning is always safe.
 
 ---
 

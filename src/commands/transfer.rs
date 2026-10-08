@@ -1,7 +1,9 @@
 //! Copies session metadata files into the destination profile. Copy, never move: the source
-//! profile keeps working if the user signs back in to it.
+//! profile keeps working if the user signs back in to it. A session the destination already has
+//! is replaced when a source holds a newer copy, since continuing a session can point it at a new
+//! transcript and the stale copy would reopen the old one.
 
-use std::collections::HashSet;
+use std::collections::{HashMap, HashSet};
 use std::process::Command;
 
 use serde_json::Value;
@@ -50,12 +52,14 @@ pub fn run(args: &TransferArgs) -> Result<()> {
         }
     }
 
-    let existing: HashSet<String> = dest.sessions()?.into_iter().map(|s| s.id).collect();
+    let existing: HashMap<String, Option<i64>> =
+        dest.sessions()?.into_iter().map(|s| (s.id, s.last_activity)).collect();
     let deleted = dest.deleted_ids();
     let mut seen = HashSet::new();
-    let (mut transferred, mut skipped, mut archived) = (Vec::new(), Vec::new(), Vec::new());
+    let (mut transferred, mut updated, mut skipped, mut archived) = (Vec::new(), Vec::new(), Vec::new(), Vec::new());
     for (profile, session) in candidates {
-        let reason = if existing.contains(&session.id) {
+        let here = existing.get(&session.id);
+        let reason = if here.is_some_and(|&here| session.last_activity <= here) {
             Some("already in destination")
         } else if deleted.contains(&session.id) {
             Some("deleted in destination")
@@ -80,7 +84,11 @@ pub fn run(args: &TransferArgs) -> Result<()> {
         if session.archived {
             archived.push(session.id.clone());
         }
-        transferred.push(row);
+        if here.is_some() {
+            updated.push(row);
+        } else {
+            transferred.push(row);
+        }
     }
     if !args.dry_run && !archived.is_empty() {
         dest.add_archived(&archived)?;
@@ -88,7 +96,7 @@ pub fn run(args: &TransferArgs) -> Result<()> {
 
     let next = if args.dry_run {
         "Dry run: nothing was written."
-    } else if transferred.is_empty() {
+    } else if transferred.is_empty() && updated.is_empty() {
         "Nothing to transfer."
     } else {
         "Quit the Claude app completely and reopen it; it reads the session list only at startup."
@@ -99,6 +107,7 @@ pub fn run(args: &TransferArgs) -> Result<()> {
         "to" => dest.id(),
         "from" => sources.iter().map(Profile::id).collect::<Vec<_>>(),
         "transferred" => Value::Array(transferred),
+        "updated" => Value::Array(updated),
         "skipped" => Value::Array(skipped),
         "next" => next,
     };
